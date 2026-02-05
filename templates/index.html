@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Music Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #8a2be2;
+        }
+
+        .header p {
+            color: #a0a0ff;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #8a2be2;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .option-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: rgba(138, 43, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: rgba(138, 43, 226, 0.6);
+            border-color: #8a2be2;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        .slider-container {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 10px;
+            --webkit-appearance: none;
+            background: linear-gradient(90deg, #8a2be2, #00d4ff);
+            border-radius: 5px;
+            outline: none;
+            margin: 15px 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .tempo-display {
+            display: flex;
+            justify-content: space-between;
+            color: #a0a0ff;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, #8a2be2, #00d4ff);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .visualizer {
+            height: 100px;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .bar {
+            width: 10px;
+            background: linear-gradient(to top, #8a2be2, #00d4ff);
+            border-radius: 5px;
+            animation: equalizer 1.5s ease-in-out infinite;
+        }
+
+        .bar:nth-child(1) {
+            animation-delay: 0.1s;
+            height: 30px;
+        }
+
+        .bar:nth-child(2) {
+            animation-delay: 0.2s;
+            height: 50px;
+        }
+
+        .bar:nth-child(3) {
+            animation-delay: 0.3s;
+            height: 70px;
+        }
+
+        .bar:nth-child(4) {
+            animation-delay: 0.4s;
+            height: 90px;
+        }
+
+        .bar:nth-child(5) {
+            animation-delay: 0.5s;
+            height: 100px;
+        }
+
+        .bar:nth-child(6) {
+            animation-delay: 0.4s;
+            height: 90px;
+        }
+
+        .bar:nth-child(7) {
+            animation-delay: 0.3s;
+            height: 70px;
+        }
+
+        .bar:nth-child(8) {
+            animation-delay: 0.2s;
+            height: 50px;
+        }
+
+        .bar:nth-child(9) {
+            animation-delay: 0.1s;
+            height: 30px;
+        }
+
+        @keyframes equalizer {
+
+            0%,
+            100% {
+                transform: scaleY(0.5);
+            }
+
+            50% {
+                transform: scaleY(1);
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #8888cc;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-music"></i> Simple Music Generator</h1>
+            <p>Create music with AI - No complex dependencies!</p>
+        </div>
+
+        <form action="/generate" method="POST" id="musicForm">
+            <!-- Mood -->
+            <div class="form-group">
+                <label><i class="fas fa-smile"></i> Select Mood</label>
+                <div class="options">
+                    <label class="option-btn selected">
+                        <input type="radio" name="mood" value="happy" checked>
+                        <i class="fas fa-laugh-beam"></i><br>
+                        Happy
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="mood" value="sad">
+                        <i class="fas fa-sad-tear"></i><br>
+                        Sad
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="mood" value="calm">
+                        <i class="fas fa-spa"></i><br>
+                        Calm
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="mood" value="energetic">
+                        <i class="fas fa-bolt"></i><br>
+                        Energetic
+                    </label>
+                </div>
+            </div>
+
+            <!-- Genre -->
+            <div class="form-group">
+                <label><i class="fas fa-compact-disc"></i> Select Genre</label>
+                <div class="options">
+                    <label class="option-btn selected">
+                        <input type="radio" name="genre" value="pop" checked>
+                        <i class="fas fa-guitar"></i><br>
+                        Pop
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="genre" value="rock">
+                        <i class="fas fa-guitar-electric"></i><br>
+                        Rock
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="genre" value="jazz">
+                        <i class="fas fa-saxophone"></i><br>
+                        Jazz
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="genre" value="electronic">
+                        <i class="fas fa-synth"></i><br>
+                        Electronic
+                    </label>
+                </div>
+            </div>
+
+            <!-- Tempo -->
+            <div class="form-group">
+                <label><i class="fas fa-tachometer-alt"></i> Tempo: <span id="tempoValue">120</span> BPM</label>
+                <div class="slider-container">
+                    <input type="range" id="tempo" name="tempo" min="60" max="200" value="120" class="slider">
+                    <div class="tempo-display">
+                        <span>Slow</span>
+                        <span>Medium</span>
+                        <span>Fast</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style -->
+            <div class="form-group">
+                <label><i class="fas fa-layer-group"></i> Select Style</label>
+                <div class="options">
+                    <label class="option-btn selected">
+                        <input type="radio" name="style" value="simple" checked>
+                        <i class="fas fa-stream"></i><br>
+                        Simple
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="style" value="complex">
+                        <i class="fas fa-random"></i><br>
+                        Complex
+                    </label>
+                </div>
+            </div>
+
+            <!-- Visualizer -->
+            <div class="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" class="generate-btn">
+                <i class="fas fa-magic"></i> Generate Music
+            </button>
+        </form>
+
+        <div class="footer">
+            <p>Simple Music Generator © 2026 </p>
+            <p></p>
+        </div>
+    </div>
+
+    <script>
+        // Update tempo display
+        const tempoSlider = document.getElementById('tempo');
+        const tempoValue = document.getElementById('tempoValue');
+
+        tempoSlider.addEventListener('input', function () {
+            tempoValue.textContent = this.value;
+        });
+
+        // Style option buttons
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                // Remove selected from all in group
+                const groupName = this.querySelector('input').name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(input => {
+                    input.closest('.option-btn').classList.remove('selected');
+                });
+
+                // Add selected to clicked
+                this.classList.add('selected');
+                this.querySelector('input').checked = true;
+            });
+        });
+    </script>
+</body>
+
+</html>
